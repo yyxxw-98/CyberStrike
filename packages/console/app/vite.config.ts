@@ -14,7 +14,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: "index.html",
+      input: 'src/index.html',
       external: ["cloudflare:workers"],
     },
     minify: false,

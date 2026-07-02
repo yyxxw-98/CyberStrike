@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { readdir, writeFile } from "fs/promises"
+import { readdir, writeFile, access } from "fs/promises"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
 import { config } from "../src/config.js"
@@ -9,6 +9,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const BASE_URL = config.baseUrl
 const PUBLIC_DIR = join(__dirname, "../public")
 const ROUTES_DIR = join(__dirname, "../src/routes")
+
+// 根据实际项目结构调整此处路径
 const DOCS_DIR = join(__dirname, "../../../web/src/content/docs")
 
 interface SitemapEntry {
@@ -17,10 +19,29 @@ interface SitemapEntry {
   changefreq: string
 }
 
+// XML 特殊字符转义，保证输出合法
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;")
+}
+
+// 检查目录是否存在
+async function directoryExists(path: string): Promise<boolean> {
+  try {
+    await access(path)
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function getMainRoutes(): Promise<SitemapEntry[]> {
   const routes: SitemapEntry[] = []
 
-  // Add main static routes
   const staticRoutes = [
     { path: "/", priority: 1.0, changefreq: "daily" },
     { path: "/enterprise", priority: 0.8, changefreq: "weekly" },
@@ -44,6 +65,12 @@ async function getMainRoutes(): Promise<SitemapEntry[]> {
 async function getDocsRoutes(): Promise<SitemapEntry[]> {
   const routes: SitemapEntry[] = []
 
+  const docsDirExists = await directoryExists(DOCS_DIR)
+  if (!docsDirExists) {
+    console.log(`Docs directory not found at ${DOCS_DIR}, skipping docs routes`)
+    return routes
+  }
+
   try {
     const files = await readdir(DOCS_DIR)
 
@@ -62,7 +89,7 @@ async function getDocsRoutes(): Promise<SitemapEntry[]> {
       }
     }
   } catch (error) {
-    console.error("Error reading docs directory:", error)
+    console.error("Failed to read docs files:", (error as Error).message)
   }
 
   return routes
@@ -72,9 +99,9 @@ function generateSitemapXML(entries: SitemapEntry[]): string {
   const urls = entries
     .map(
       (entry) => `  <url>
-    <loc>${entry.url}</loc>
+    <loc>${escapeXml(entry.url)}</loc>
     <changefreq>${entry.changefreq}</changefreq>
-    <priority>${entry.priority}</priority>
+    <priority>${entry.priority.toFixed(1)}</priority>
   </url>`,
     )
     .join("\n")
@@ -88,8 +115,10 @@ ${urls}
 async function main() {
   console.log("Generating sitemap...")
 
-  const mainRoutes = await getMainRoutes()
-  const docsRoutes = await getDocsRoutes()
+  const [mainRoutes, docsRoutes] = await Promise.all([
+    getMainRoutes(),
+    getDocsRoutes(),
+  ])
 
   const allRoutes = [...mainRoutes, ...docsRoutes]
 
