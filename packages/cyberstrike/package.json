@@ -32,6 +32,7 @@
     "typecheck": "tsgo --noEmit",
     "test": "bun test --timeout 30000",
     "build": "bun run script/build.ts",
+    "compile": "bun build ./src/index.ts --outfile ./dist/cyberstrike --compile",
     "dev": "bun run --conditions=browser ./src/index.ts",
     "clean": "rm -rf node_modules dist",
     "db": "bun drizzle-kit"
