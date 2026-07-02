@@ -1,4 +1,5 @@
 FROM oven/bun:1-alpine
+RUN apk add --no-cache git
 WORKDIR /app
 
 # 复制根目录依赖文件
