@@ -4,6 +4,7 @@ WORKDIR /app
 # 复制根目录依赖文件
 COPY package.json bun.lock ./
 # 复制 monorepo 子包目录（install 前必须存在）
+COPY patches ./patches
 COPY packages ./packages
 # 复制业务代码目录
 
