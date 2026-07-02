@@ -4,6 +4,7 @@ WORKDIR /app
 # 复制根目录依赖文件
 COPY package.json bun.lock ./
 # 复制 monorepo 子包目录（install 前必须存在）
+COPY turbo.json ./  
 COPY patches ./patches
 COPY packages ./packages
 # 复制业务代码目录
@@ -12,7 +13,7 @@ COPY packages ./packages
 # 安装依赖
 RUN bun install --frozen-lock
 # 执行项目构建 + 全局注册命令
-RUN bun run build && bun link
+RUN bun run build
 
 EXPOSE 3000
 CMD ["cyberstrike", "web"]
