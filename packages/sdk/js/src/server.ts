@@ -28,7 +28,8 @@ export async function createCyberstrikeServer(options?: ServerOptions) {
     options ?? {},
   )
 
-  const args = [`serve`, `--hostname=${options.hostname}`, `--port=${options.port}`]
+  // 手动标注 string[] 类型，解决 never 报错
+  const args: string[] = [`serve`, `--hostname=${options.hostname}`, `--port=${options.port}`]
   if (options.config?.logLevel) args.push(`--log-level=${options.config.logLevel}`)
 
   const proc = spawn(`cyberstrike`, args, {
@@ -51,7 +52,9 @@ export async function createCyberstrikeServer(options?: ServerOptions) {
         if (line.startsWith("cyberstrike server listening")) {
           const match = line.match(/on\s+(https?:\/\/[^\s]+)/)
           if (!match) {
-            throw new Error(`Failed to parse server url from output: ${line}`)
+            clearTimeout(id)
+            reject(new Error(`Failed to parse server url from output: ${line}`))
+            return
           }
           clearTimeout(id)
           resolve(match[1]!)
@@ -91,7 +94,8 @@ export async function createCyberstrikeServer(options?: ServerOptions) {
 }
 
 export function createCyberstrikeTui(options?: TuiOptions) {
-  const args = []
+  // 手动标注 string[] 类型，解决 never 报错
+  const args: string[] = []
 
   if (options?.project) {
     args.push(`--project=${options.project}`)

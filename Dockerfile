@@ -17,4 +17,4 @@ RUN bun install
 RUN bun run build
 
 EXPOSE 3000
-CMD ["cyberstrike", "web"]
+CMD ["/app/packages/cyberstrike/dist/cyberstrike", "web"]

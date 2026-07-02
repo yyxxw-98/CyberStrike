@@ -1,0 +1,12 @@
+[2026-07-02T08:48:36.151Z] Error: Error opening file "C:\Users\yzx\Desktop\workspace\CyberStrike\packages\sdk\js\openapi.json" 
+ENOENT: no such file or directory, open 'C:\Users\yzx\Desktop\workspace\CyberStrike\packages\sdk\js\openapi.json'
+Stack:
+JSONParserError: Error opening file "C:\Users\yzx\Desktop\workspace\CyberStrike\packages\sdk\js\openapi.json" 
+ENOENT: no such file or directory, open 'C:\Users\yzx\Desktop\workspace\CyberStrike\packages\sdk\js\openapi.json'
+    at <anonymous> (C:\Users\yzx\Desktop\workspace\CyberStrike\node_modules\.bun\@hey-api+json-schema-ref-parser@1.2.2\node_modules\@hey-api\json-schema-ref-parser\dist\lib\resolvers\file.js:58:35)
+    at async parse (C:\Users\yzx\Desktop\workspace\CyberStrike\node_modules\.bun\@hey-api+json-schema-ref-parser@1.2.2\node_modules\@hey-api\json-schema-ref-parser\dist\lib\index.js:225:32)
+    at async bundle (C:\Users\yzx\Desktop\workspace\CyberStrike\node_modules\.bun\@hey-api+json-schema-ref-parser@1.2.2\node_modules\@hey-api\json-schema-ref-parser\dist\lib\index.js:132:20)
+    at async <anonymous> (C:\Users\yzx\Desktop\workspace\CyberStrike\node_modules\.bun\@hey-api+openapi-ts@0.90.10+e728902da7aa252f\node_modules\@hey-api\openapi-ts\dist\src-YIQMkx2V.mjs:274:24)
+    at async <anonymous> (C:\Users\yzx\Desktop\workspace\CyberStrike\node_modules\.bun\@hey-api+openapi-ts@0.90.10+e728902da7aa252f\node_modules\@hey-api\openapi-ts\dist\src-YIQMkx2V.mjs:397:18)
+    at async createClient (C:\Users\yzx\Desktop\workspace\CyberStrike\node_modules\.bun\@hey-api+openapi-ts@0.90.10+e728902da7aa252f\node_modules\@hey-api\openapi-ts\dist\src-YIQMkx2V.mjs:395:35)
+    at processTicksAndRejections (native:7:39)

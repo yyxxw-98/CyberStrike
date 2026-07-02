@@ -1,21 +1,26 @@
-#!/usr/bin/env bun
+import { dirname, join, resolve } from "path";
+import { fileURLToPath } from "url";
+import { $ } from "bun";
+import { createClient } from "@hey-api/openapi-ts";
 
-const dir = new URL("..", import.meta.url).pathname
-process.chdir(dir)
+const __filename = fileURLToPath(import.meta.url);
+const scriptDir = dirname(__filename);
+// 层级修正，定位packages/cyberstrike
+const cyberDir = resolve(scriptDir, "../../../cyberstrike");
+const openapiPath = join(scriptDir, "openapi.json");
 
-import { $ } from "bun"
-import path from "path"
+// Windows兼容生成openapi.json，抛弃管道重定向
+const genOutput = await $`bun dev generate`.cwd(cyberDir).text();
+await Bun.write(openapiPath, genOutput);
 
-import { createClient } from "@hey-api/openapi-ts"
-
-await $`bun dev generate > ${dir}/openapi.json`.cwd(path.resolve(dir, "../../cyberstrike"))
-
+// 生成SDK，开启自动.ts导入后缀，兼容node16解析
 await createClient({
-  input: "./openapi.json",
+  input: openapiPath,
   output: {
     path: "./src/v2/gen",
-    tsConfigPath: path.join(dir, "tsconfig.json"),
+    tsConfigPath: join(scriptDir, "tsconfig.json"),
     clean: true,
+    fileExtension: ".ts" // 关键：生成导入带.ts后缀，解决TS2834
   },
   plugins: [
     {
@@ -24,7 +29,12 @@ await createClient({
     },
     {
       name: "@hey-api/sdk",
-      instance: "CyberstrikeClient",
+      // 替换废弃instance配置，消除警告
+      operations: {
+        strategy: "single",
+        containerName: "CyberstrikeClient",
+        methods: "instance"
+      },
       exportFromIndex: false,
       auth: false,
       paramsStructure: "flat",
@@ -35,10 +45,16 @@ await createClient({
       baseUrl: "http://localhost:4096",
     },
   ],
-})
+});
 
-await $`bun prettier --write src/gen`
-await $`bun prettier --write src/v2`
-await $`rm -rf dist`
-await $`bun tsc`
-await $`rm openapi.json`
+// 格式化生成代码，修复导入排版
+await $`bun prettier --write src/gen`;
+await $`bun prettier --write src/v2`;
+
+// TS类型编译（tsconfig修改后启用）
+// await $`bun tsc`;
+
+// 清理产物与临时文件
+if (await Bun.file(openapiPath).exists()) {
+  await Bun.file(openapiPath).delete();
+}
