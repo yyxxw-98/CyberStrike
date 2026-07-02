@@ -12,7 +12,7 @@ COPY packages ./packages
 
 
 # 安装依赖
-RUN bun install --frozen-lock
+RUN bun install 
 # 执行项目构建 + 全局注册命令
 RUN bun run build
 
