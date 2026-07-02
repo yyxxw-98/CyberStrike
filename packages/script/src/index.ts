@@ -31,7 +31,12 @@ const CHANNEL = await (async () => {
     const pre = env.CYBERSTRIKE_VERSION.match(/-([a-z]+)/i)?.[1]
     return pre ?? "latest"
   }
-  return await $`git branch --show-current`.text().then((x) => x.trim())
+  try {
+    return await $`git branch --show-current`.text().then((x) => x.trim())
+  } catch (e) {
+    console.warn("当前环境非 Git 仓库，使用默认版本标签 latest");
+    return "latest";
+  }
 })()
 const IS_PREVIEW = CHANNEL !== "latest"
 
