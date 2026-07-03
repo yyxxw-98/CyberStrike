@@ -1,20 +1,22 @@
-FROM oven/bun:1-alpine
-RUN apk add --no-cache git
+FROM oven/bun:1-slim
+RUN apt update && apt install -y git
 WORKDIR /app
 
-# 复制根目录依赖文件
 COPY package.json bun.lock ./
-# 复制 monorepo 子包目录（install 前必须存在）
-COPY turbo.json ./  
+COPY turbo.json ./
 COPY patches ./patches
 COPY packages ./packages
-# 复制业务代码目录
 
-
-# 安装依赖
-RUN bun install 
-# 执行项目构建 + 全局注册命令
+RUN bun install
 RUN bun run build
 
+# 容器内编译Linux二进制
+RUN cd packages/cyberstrike && bun run compile
+# 打印目录排查 + 赋予执行权限
+RUN ls -la /app/packages/cyberstrike/dist/
+RUN chmod +x /app/packages/cyberstrike/dist/cyberstrike
+# 同时校验文件存在+可执行
+RUN test -x /app/packages/cyberstrike/dist/cyberstrike || exit 1
+
 EXPOSE 3000
-CMD ["/app/packages/cyberstrike/dist/cyberstrike", "web"]
+CMD ["/app/packages/cyberstrike/dist/cyberstrike-linux-x64-musl/bin/cyberstrike", "web"]
