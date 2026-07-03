@@ -18,5 +18,9 @@ RUN chmod +x /app/packages/cyberstrike/dist/cyberstrike
 # 同时校验文件存在+可执行
 RUN test -x /app/packages/cyberstrike/dist/cyberstrike || exit 1
 
+# 2. 👇 新增这行：自动找到构建生成的 cyberstrike 文件，强制放进系统路径并赋予执行权限！
+RUN find /app/packages/cyberstrike -name cyberstrike -type f -exec cp {} /usr/local/bin/cyberstrike \; && chmod +x /usr/local/bin/cyberstrike
+
+# 3. 恢复成最干净的标准启动命令
 EXPOSE 3000
-CMD ["/app/packages/cyberstrike/dist/cyberstrike-linux-x64-musl/bin/cyberstrike", "web"]
+CMD ["cyberstrike", "web"]
