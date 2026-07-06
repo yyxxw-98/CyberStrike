@@ -23,4 +23,4 @@ RUN find /app/packages/cyberstrike -name cyberstrike -type f -exec cp {} /usr/lo
 
 # 3. 恢复成最干净的标准启动命令
 EXPOSE 3000
-CMD ["cyberstrike", "web"]
+CMD ["cyberstrike", "web", "--workdir", "/app"]
