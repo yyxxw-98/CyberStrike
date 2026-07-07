@@ -35,4 +35,4 @@ EXPOSE 3000
 EXPOSE 3000
 # 挂载卷初始化前置脚本，再启动web服务
 ENTRYPOINT ["/usr/local/bin/init-workspace.sh"]
-CMD ["cyberstrike", "web"]
+CMD ["cyberstrike", "web", "--hostname", "0.0.0.0"]
