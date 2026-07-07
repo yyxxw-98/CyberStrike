@@ -12,5 +12,8 @@ if [ -z "$(ls -A /workspace)" ]; then
   echo "文件复制完成，WebIDE可正常读取项目目录"
 fi
 
-# 启动web服务
-exec "$@"
+# 核心修复1：切换工作目录到/workspace，程序直接在持久卷运行
+cd /workspace
+
+# 核心修复2：使用程序原生支持的监听参数 --主机名 0.0.0.0
+exec cyberstrike web --hostname 0.0.0.0
