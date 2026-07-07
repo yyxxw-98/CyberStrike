@@ -1,0 +1,13 @@
+{
+  "deploy": {
+    "mounts": [
+      {
+        "source": "workspace-volume",
+        "destination": "/workspace"
+      }
+    ],
+    "environment": {
+      "WORKSPACE_ROOT": "/workspace"
+    }
+  }
+}
