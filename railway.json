@@ -2,7 +2,7 @@
   "deploy": {
     "mounts": [
       {
-        "source": "workspace-volume",
+        "source": "cyberstrike-volume",
         "destination": "/workspace"
       }
     ],
