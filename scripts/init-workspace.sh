@@ -1,13 +1,16 @@
 #!/bin/sh
-# 先强制创建/workspace目录，规避挂载时序延迟报错
+# 强制创建目录，解决挂载时序报错
 mkdir -p /workspace
 mkdir -p /migration
-# 目录存在后再复制文件
+
 if [ -z "$(ls -A /workspace)" ]; then
-  echo "检测到/workspace持久卷为空，正在复制/app全部项目文件"
-  cp -r /app/* /workspace/
+  echo "检测/workspace为空，分步复制，跳过node_modules减少内存占用"
+  cd /app
+  # 只复制业务源码，跳过超大node_modules文件夹，从根源降低内存峰值
+  find . -maxdepth 1 ! -name "node_modules" -exec cp -r {} /workspace/ \;
   chmod -R 777 /workspace
   echo "文件复制完成，WebIDE可正常读取项目目录"
 fi
-# 执行web启动程序
+
+# 启动web服务
 exec "$@"
