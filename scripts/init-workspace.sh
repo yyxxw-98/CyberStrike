@@ -16,4 +16,4 @@ fi
 cd /workspace
 
 # 核心修复2：使用程序原生支持的监听参数 --主机名 0.0.0.0
-exec cyberstrike web --hostname 0.0.0.0
+exec cyberstrike web
