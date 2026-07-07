@@ -1,0 +1,10 @@
+.git
+.github
+docs
+assets
+specs
+nix
+sdks/vscode
+node_modules
+*.md
+tests
